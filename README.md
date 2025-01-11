@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="banner.png" />
+  <img src="assets/banner.png" />
 </p>
 <div align="center">
   <a href="https://github.com/kenhendricks00/KeyLux/releases">
@@ -17,7 +17,7 @@
 **KeyLux** is a desktop application that automatically adjusts your Elgato Key Light's brightness and color temperature throughout the day, similar to how f.lux manages your screen's blue light. It transitions smoothly from energizing daylight colors in the morning to warm, comfortable tones in the evening, helping reduce eye strain during long streaming or recording sessions.
 
 <p align="center">
-  <img src="screenshot.png" style="width: 300px">
+  <img src="assets/screenshot.png" style="width: 300px">
 </p>
 
 ***
