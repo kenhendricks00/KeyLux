@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>KeyLux</title>
+    <!-- Your existing styles remain exactly the same -->
+    <style>
+      /* All your existing styles remain unchanged */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        padding: 20px;
+        background: #1c1c1e;
+        color: #ffffff;
+        user-select: none;
+        margin: 0;
+      }
+
+      h2 {
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+
+      .transition-section {
+        background: #2c2c2e;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+      }
+
+      .transition-title {
+        font-weight: 500;
+        margin-bottom: 16px;
+        color: #ffffff;
+        font-size: 16px;
+      }
+
+      .setting-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .setting-row label {
+        color: #86868b;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        background: transparent;
+        width: 200px;
+        margin: 0;
+        pointer-events: auto;
+      }
+
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 4px;
+        cursor: pointer;
+        animate: 0.2s;
+        background: #48484a;
+        border-radius: 2px;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        background: #007aff;
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -7px;
+      }
+
+      input[type="range"]:focus {
+        outline: none;
+      }
+
+      input[type="range"]:focus::-webkit-slider-thumb {
+        background: #0056b3;
+      }
+
+      input[type="range"]:hover::-webkit-slider-thumb {
+        background: #0056b3;
+      }
+
+      input[type="time"] {
+        background: #3c3c3e;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        color: #ffffff;
+        font-size: 14px;
+        outline: none;
+      }
+
+      input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+      }
+
+      .button-container {
+        display: flex;
+        gap: 10px;
+      }
+
+      button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+
+      button.primary {
+        background: #007aff;
+        color: white;
+      }
+
+      button.primary:hover {
+        background: #0056b3;
+      }
+
+      button.secondary {
+        background: #3c3c3e;
+        color: white;
+      }
+
+      button.secondary:hover {
+        background: #48484a;
+      }
+
+      .value-display {
+        min-width: 50px;
+        text-align: right;
+        margin-left: 12px;
+        color: #86868b;
+        font-size: 14px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #2c2c2e;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #48484a;
+        border-radius: 10px;
+        transition: background 0.2s;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #007aff;
+      }
+
+      ::-webkit-scrollbar-corner {
+        background: #2c2c2e;
+      }
+
+      body {
+        scrollbar-width: thin;
+        scrollbar-color: #48484a #2c2c2e;
+      }
+
+      body::-webkit-scrollbar-track {
+        background: #2c2c2e;
+      }
+
+      body::-webkit-scrollbar-thumb {
+        background: #48484a;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>KeyLux Settings</h2>
+    <div id="transitions"></div>
+    <div class="button-container">
+      <button class="secondary" onclick="window.app.resetDefaults()">
+        Reset to Defaults
+      </button>
+      <button class="primary" onclick="window.app.saveSettings()">
+        Save Settings
+      </button>
+    </div>
+
+    <script>
+      let currentSettings = null;
+
+      // Create transition section with sliders and time inputs
+      function createTransitionSection(period, settings) {
+        return `
+          <div class="transition-section">
+            <div class="transition-title">${
+              period.charAt(0).toUpperCase() + period.slice(1)
+            }</div>
+            <div class="setting-row">
+              <label>Start Time:</label>
+              <input type="time" value="${settings.time}" 
+                     onchange="window.app.updateSetting('${period}', 'time', this.value)">
+            </div>
+            <div class="setting-row">
+              <label>Temperature:</label>
+              <input type="range" min="2900" max="7000" value="${
+                settings.temperature
+              }"
+                     oninput="window.app.updateRangeValue('${period}', 'temperature', this)">
+              <div class="value-display" id="temperature-${period}">${
+          settings.temperature
+        }K</div>
+            </div>
+            <div class="setting-row">
+              <label>Brightness:</label>
+              <input type="range" min="0" max="100" value="${
+                settings.brightness
+              }"
+                     oninput="window.app.updateRangeValue('${period}', 'brightness', this)">
+              <div class="value-display" id="brightness-${period}">${
+          settings.brightness
+        }%</div>
+            </div>
+          </div>
+        `;
+      }
+
+      window.app = {
+        // Update settings and render real-time values for sliders
+        updateRangeValue: function (period, setting, rangeInput) {
+          const value = parseInt(rangeInput.value);
+          currentSettings[period][setting] = value;
+
+          // Update the value display dynamically
+          const displayElement = document.getElementById(
+            `${setting}-${period}`
+          );
+          if (setting === "temperature") {
+            displayElement.textContent = `${value}K`;
+          } else if (setting === "brightness") {
+            displayElement.textContent = `${value}%`;
+          }
+        },
+
+        updateSetting: function (period, setting, value) {
+          if (setting === "temperature" || setting === "brightness") {
+            value = parseInt(value);
+          }
+          currentSettings[period][setting] = value;
+          if (setting === "time") {
+            currentSettings[period].startTime = value;
+          }
+          renderSettings();
+        },
+
+        saveSettings: async function () {
+          await window.electronAPI.saveTransitions(currentSettings);
+        },
+
+        resetDefaults: async function () {
+          currentSettings = await window.electronAPI.resetDefaults();
+          renderSettings();
+        },
+      };
+
+      function renderSettings() {
+        const transitionsDiv = document.getElementById("transitions");
+        transitionsDiv.innerHTML = Object.entries(currentSettings)
+          .map(([period, settings]) =>
+            createTransitionSection(period, settings)
+          )
+          .join("");
+      }
+
+      // Initialize settings
+      async function init() {
+        try {
+          currentSettings = await window.electronAPI.getTransitions();
+          renderSettings();
+        } catch (error) {
+          console.error("Failed to load settings:", error);
+        }
+      }
+
+      // Initialize when the page loads
+      init();
+    </script>
+  </body>
+</html>
