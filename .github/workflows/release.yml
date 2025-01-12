@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write # This is crucial for creating releases
+
 jobs:
   release:
     runs-on: windows-latest
@@ -21,10 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # Split build and publish steps
       - name: Build Electron app
-        run: npm run build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node -e "const fs=require('fs'); const p=require('./package.json'); p.build.publish=null; fs.writeFileSync('./package.json', JSON.stringify(p, null, 2));"
+          npm run build
 
       - name: Create ZIP of win-unpacked (Portable)
         run: |
