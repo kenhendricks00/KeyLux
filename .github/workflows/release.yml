@@ -45,7 +45,7 @@ jobs:
         with:
           files: |
             dist/KeyLux-Portable.zip
-            dist/*Setup.exe
+            dist/*Setup*.exe
           draft: false
           prerelease: false
           generate_release_notes: true
