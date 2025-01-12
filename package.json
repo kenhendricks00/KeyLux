@@ -1,5 +1,6 @@
 {
   "name": "KeyLux",
+  "author": "Kenneth Hendricks",
   "version": "1.0.0",
   "description": "f.lux-style automation for Elgato Key Lights",
   "main": "main.js",
