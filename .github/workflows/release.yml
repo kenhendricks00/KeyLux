@@ -29,6 +29,9 @@ jobs:
         run: |
           cd dist/win-unpacked
           7z a -tzip ../KeyLux-Portable.zip *
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
       - name: Create Release
         if: success()
         uses: softprops/action-gh-release@v1
@@ -37,7 +40,7 @@ jobs:
         with:
           files: |
             dist/KeyLux-Portable.zip
-            'dist/KeyLux Setup *.exe'
+            'dist/KeyLux Setup ${{ env.VERSION }}.exe'
           draft: false
           prerelease: false
           generate_release_notes: true
