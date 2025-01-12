@@ -35,12 +35,6 @@ jobs:
         run: |
           $version = $env:GITHUB_REF -replace 'refs/tags/v', ''
           "VERSION=$version" >> $env:GITHUB_ENV
-      - name: List dist directory
-        if: success()
-        run: |
-          cd dist
-          Get-ChildItem -Name
-          Get-ChildItem | Select-Object Name, Length
       - name: Create Release
         if: success()
         uses: softprops/action-gh-release@v1
@@ -49,7 +43,7 @@ jobs:
         with:
           files: |
             dist/KeyLux-Portable.zip
-            'dist/KeyLux Setup ${{ env.VERSION }}.exe'
+            dist/KeyLux Setup ${{ env.VERSION }}.exe
           draft: false
           prerelease: false
           generate_release_notes: true
