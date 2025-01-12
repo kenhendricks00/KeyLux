@@ -31,7 +31,10 @@ jobs:
           7z a -tzip ../KeyLux-Portable.zip *
       - name: Get version from tag
         id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF -replace 'refs/tags/v', ''
+          "VERSION=$version" >> $env:GITHUB_ENV
       - name: Create Release
         if: success()
         uses: softprops/action-gh-release@v1
