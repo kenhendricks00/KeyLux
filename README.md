@@ -4,9 +4,9 @@
 <div align="center">
   <a href="https://github.com/kenhendricks00/KeyLux/releases">
     <img src="https://img.shields.io/github/v/release/kenhendricks00/KeyLux?color=blue&label=Latest%20Release" alt="Latest Release"></a>
-  <a href="https://github.com/yourusername/keylux/commits/main">
+  <a href="https://github.com/kenhendricks00/keylux/commits/main">
     <img src="https://img.shields.io/github/last-commit/kenhendricks00/KeyLux?color=green&label=Last%20Commit" alt="Last Commit"></a>
-  <a href="https://github.com/yourusername/keylux/blob/main/LICENSE">
+  <a href="https://github.com/kenhendricks00/keylux/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/kenhendricks00/KeyLux" alt="License"></a>
 </div>
 <br>
