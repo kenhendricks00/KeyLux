@@ -1,15 +1,12 @@
 name: Build and Release
-
 on:
   push:
     tags:
       - 'v*'
-
 permissions:
   contents: write
   issues: write
   pull-requests: write
-
 jobs:
   release:
     runs-on: windows-latest
@@ -17,26 +14,21 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
-
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-
       - name: Install dependencies
         run: npm install
-
       - name: Build Electron app
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create ZIP of win-unpacked (Portable)
         if: success()
         run: |
-          cd dist
-          7z a -tzip KeyLux-Portable.zip win-unpacked/*
-
+          cd dist/win-unpacked
+          7z a -tzip ../KeyLux-Portable.zip *
       - name: Create Release
         if: success()
         uses: softprops/action-gh-release@v1
@@ -45,7 +37,7 @@ jobs:
         with:
           files: |
             dist/KeyLux-Portable.zip
-            dist/KeyLux Setup*.exe
+            'dist/KeyLux Setup *.exe'
           draft: false
           prerelease: false
           generate_release_notes: true
