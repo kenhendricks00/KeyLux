@@ -7,11 +7,13 @@ on:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   release:
     runs-on: windows-latest
-
+    
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
@@ -24,19 +26,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Split build and publish steps
       - name: Build Electron app
-        run: |
-          node -e "const fs=require('fs'); const p=require('./package.json'); p.build.publish=null; fs.writeFileSync('./package.json', JSON.stringify(p, null, 2));"
-          npm run build
+        run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create ZIP of win-unpacked (Portable)
+        if: success()
         run: |
           cd dist
           7z a -tzip KeyLux-Portable.zip win-unpacked/*
 
       - name: Create Release
+        if: success()
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
             dist/KeyLux-Portable.zip
@@ -44,5 +49,3 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
